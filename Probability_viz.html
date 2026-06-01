@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Probability — Interactive Visualizations</title>
+<style>
+:root{--bg:#0d0d1a;--surf:#13132b;--surf2:#1c1c3a;--bdr:#2a2a50;--txt:#e8e8f4;--muted:#8888aa;--blue:#58a6ff;--yellow:#f7c948;--coral:#ff6b6b;--green:#5ced8a;--purple:#b983ff;--teal:#48dbfb;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.65;}
+header{background:linear-gradient(135deg,#0d0d1a,#1a1a3e);padding:50px 40px 40px;text-align:center;border-bottom:1px solid var(--bdr);}
+header .chip{display:inline-block;background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);color:var(--blue);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:16px;}
+header h1{font-size:clamp(1.8rem,4vw,3rem);color:#fff;font-weight:300;letter-spacing:-.02em;margin-bottom:8px;}
+header h1 span{color:var(--yellow);font-weight:600;}
+header p{color:var(--muted);font-size:1rem;max-width:560px;margin:0 auto;}
+nav{background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;overflow-x:auto;padding:0 20px;position:sticky;top:0;z-index:100;scrollbar-width:thin;}
+nav button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.82rem;padding:14px 16px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit;}
+nav button:hover{color:var(--txt);}
+nav button.active{color:var(--blue);border-bottom-color:var(--blue);}
+section{display:none;padding:40px;max-width:1080px;margin:0 auto;animation:fadeIn .3s ease;}
+section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sec-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.sec-title{font-size:1.9rem;font-weight:300;color:#fff;}
+.sec-title .num{background:var(--blue);color:#000;width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:700;margin-right:10px;vertical-align:middle;}
+.rand-btn{background:var(--surf2);border:1px solid var(--bdr);color:var(--yellow);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.83rem;font-family:inherit;transition:all .2s;}
+.rand-btn:hover{border-color:var(--yellow);}
+.story-box{background:linear-gradient(135deg,rgba(88,166,255,.06),rgba(247,201,72,.04));border:1px solid rgba(88,166,255,.2);border-radius:12px;padding:22px 26px;margin-bottom:24px;position:relative;}
+.story-box .story-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:10px;}
+.story-box .story-title{font-size:1.15rem;font-weight:600;color:#fff;margin-bottom:10px;}
+.story-box p{color:var(--txt);font-size:.92rem;margin-bottom:8px;}
+.story-box p:last-child{margin-bottom:0;}
+.story-nav{display:flex;align-items:center;gap:8px;margin-top:14px;}
+.story-dot{width:8px;height:8px;border-radius:50%;background:var(--bdr);cursor:pointer;transition:background .2s;}
+.story-dot.active{background:var(--blue);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:700px){.grid2{grid-template-columns:1fr;}.sec-header{flex-direction:column;}section{padding:24px 16px;}}
+.panel{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:22px;}
+.panel-title{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.panel-title::before{content:'▶';font-size:.65rem;}
+h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.07em;color:var(--yellow);margin:20px 0 10px;}
+p.muted{color:var(--muted);font-size:.9rem;margin-bottom:12px;}
+.formula{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:14px 18px;margin:12px 0;font-family:'Courier New',monospace;font-size:.95rem;position:relative;}
+.formula .fl{position:absolute;top:-9px;left:14px;background:var(--surf2);color:var(--purple);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;padding:0 6px;}
+.formula .eq{color:var(--txt);}
+.formula .eq .hi{color:var(--yellow);}
+.formula .eq .op{color:var(--coral);}
+.formula .eq .vr{color:var(--blue);}
+.result{background:var(--surf2);border-radius:8px;padding:14px 18px;margin:12px 0;font-family:'Courier New',monospace;font-size:.88rem;}
+.result .rl{margin-bottom:5px;color:var(--muted);}
+.result .rl span{color:var(--green);font-weight:600;}
+.result .rh{color:var(--yellow);font-size:1rem;font-weight:700;margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr);}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin-bottom:16px;}
+.ctrl{display:flex;flex-direction:column;gap:4px;}
+.ctrl label{font-size:.8rem;color:var(--muted);}
+.ctrl .val{color:var(--yellow);font-family:'Courier New',monospace;font-weight:600;}
+input[type=range]{accent-color:var(--blue);width:140px;cursor:pointer;}
+input[type=number]{background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:6px 10px;width:75px;font-size:.9rem;font-family:inherit;}
+button.btn{background:var(--blue);color:#000;border:none;border-radius:7px;padding:8px 16px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s;}
+button.btn:hover{opacity:.85;}
+button.btn.sec{background:var(--surf2);color:var(--txt);border:1px solid var(--bdr);}
+.tbl{width:100%;border-collapse:collapse;font-size:.87rem;margin:10px 0;}
+.tbl th{background:var(--surf2);color:var(--blue);padding:9px 12px;text-align:center;border:1px solid var(--bdr);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;}
+.tbl td{padding:8px 12px;text-align:center;border:1px solid var(--bdr);color:var(--muted);font-family:'Courier New',monospace;cursor:pointer;transition:background .15s;}
+.tbl td.joint{color:var(--green);}
+.tbl td.marg{color:var(--yellow);font-weight:600;background:rgba(247,201,72,.05);}
+.tbl td.tot{color:var(--coral);font-weight:700;background:rgba(255,107,107,.05);}
+.tbl td:hover{background:rgba(88,166,255,.1);}
+.tbl td.hi{background:rgba(88,166,255,.18);color:var(--blue);font-weight:700;}
+.insight{display:flex;gap:12px;background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.2);border-radius:10px;padding:14px 16px;margin:16px 0;}
+.insight .ic{font-size:1.3rem;flex-shrink:0;}
+.insight p{margin:0;color:var(--txt);font-size:.88rem;}
+.insight p em{color:var(--blue);font-style:normal;}
+.steps{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0;}
+.step{background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;padding:10px 14px;text-align:center;min-width:100px;}
+.step .sl{font-size:.68rem;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.step .sv{color:var(--blue);font-family:'Courier New',monospace;font-size:.95rem;font-weight:600;}
+.step.hi{border-color:var(--yellow);}
+.step.hi .sv{color:var(--yellow);}
+.arrow{color:var(--yellow);font-size:1.3rem;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:16px 0;}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:18px;transition:border-color .2s,transform .2s;}
+.card:hover{border-color:var(--blue);transform:translateY(-2px);}
+.card .ci{font-size:1.6rem;margin-bottom:8px;}
+.card h4{color:var(--txt);font-size:.95rem;margin-bottom:6px;}
+.card p{font-size:.83rem;color:var(--muted);margin:0;}
+hr.div{border:none;border-top:1px solid var(--bdr);margin:28px 0;}
+.pbar-wrap{margin:8px 0;}
+.pbar-head{display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:3px;}
+.pbar-head .pn{color:var(--muted);}
+.pbar-head .pv{color:var(--yellow);font-family:'Courier New',monospace;font-weight:600;}
+.pbar{height:10px;background:var(--surf2);border-radius:5px;overflow:hidden;}
+.pbfill{height:100%;border-radius:5px;transition:width .4s ease;}
+.info-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0;}
+.info-cell{background:var(--surf2);border-radius:8px;padding:12px;text-align:center;}
+.info-cell .in{font-size:1.5rem;font-weight:700;font-family:'Courier New',monospace;}
+.info-cell .il{color:var(--muted);font-size:.72rem;margin-top:3px;}
+svg{display:block;}
+.svgwrap{border:1px solid var(--bdr);border-radius:10px;overflow:hidden;background:#080815;margin:10px 0;}
+.tree-node{cursor:pointer;}
+.tree-node:hover .vis-circle{filter:brightness(1.3);}
+.path-line{transition:opacity .3s,stroke .3s;}
+.event-btn{background:var(--surf2);border:1px solid var(--bdr);color:var(--muted);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.8rem;font-family:inherit;transition:all .2s;margin:3px;}
+.event-btn:hover,.event-btn.active{color:#000;font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Introduction to <span>Probability</span></h1>
+  <p>Interactive visualizations for MBA students. Each concept told through real business stories.</p>
+</header>
+
+<nav id="nav">
+  <button class="active" onclick="show(0)">① Experiments &amp; Events</button>
+  <button onclick="show(1)">② Assigning Probability</button>
+  <button onclick="show(2)">③ Addition Law</button>
+  <button onclick="show(3)">④ Conditional Probability</button>
+  <button onclick="show(4)">⑤ Independence &amp; Multiplication</button>
+  <button onclick="show(5)">⑥ Bayes' Theorem</button>
+</nav>
+
+<!-- ═══════ SECTION 1: EXPERIMENTS & EVENTS ═══════ -->
+<section id="s0" class="active">
+  <div class="sec-header">
+    <div class="sec-title"><span class="num">1</span> Experiments &amp; Events</div>
+  </div>
+  <div id="s0-story" class="story-box"></div>
+  <div id="s0-freq-table" style="margin-bottom:18px;"></div>
+  <div class="panel" style="margin-bottom:14px;">
+    <div class="panel-title">Click any leaf node to reveal outcome details</div>
+    <div id="s0-node-result" class="result" style="display:none;">
+      <div class="rl">Outcome: <span id="s0-nr-out">—</span></div>
+      <div class="rl">Total: <span id="s0-nr-tot">—</span></div>
+      <div class="rl">Probability: <span id="s0-nr-prob">—</span></div>
+      <div class="rl" id="s0-nr-interp" style="color:var(--teal);margin-top:6px;font-size:.82rem;"></div>
+    </div>
+  </div>
+  <div class="svgwrap" id="s0-svg-wrap"></div>
+</section>
+
+<!-- ═══════ SECTION 2: ASSIGNING PROBABILITY ═══════ -->
+<section id="s1">
+  <div class="sec-header">
+    <div class="sec-title"><span class="num">2</span> Assigning Probability</div>
+  </div>
+  <div class="cards" style="margin-bottom:20px;">
+    <div class="card"><div class="ci">🎲</div><h4>Classical Method</h4><p>All outcomes equally likely: P(Eᵢ) = 1/n. Valid only when symmetry guarantees fairness — a fair die, a shuffled deck.</p></div>
+    <div class="card"><div class="ci">📊</div><h4>Relative Frequency</h4><p>P(Eᵢ) = (times Eᵢ occurred) / (total observations). Grounded in real data. Improves as sample size grows — the Law of Large Numbers.</p></div>
+    <div class="card"><div class="ci">🧠</div><h4>Subjective Method</h4><p>Expert judgment for unique, unrepeatable events. Different analysts may reasonably assign different probabilities — all are valid starting priors for Bayesian updating.</p></div>
+  </div>
+  <div id="s1-story" class="story-box"></div>
+  <div class="panel">
+    <div class="panel-title">Relative Frequency — Frequency Table &amp; Bar Chart</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end;">
+      <svg id="freq-svg" viewBox="0 0 360 220" width="360" height="220" style="flex-shrink:0;">
+        <g id="freq-bars"></g>
+        <line x1="40" y1="195" x2="350" y2="195" stroke="#2a2a50" stroke-width="1"/>
+        <line x1="40" y1="195" x2="40" y2="15" stroke="#2a2a50" stroke-width="1"/>
+        <text x="195" y="215" text-anchor="middle" fill="#8888aa" font-size="10" font-family="sans-serif" id="freq-axis-lbl">Outcome</text>
+      </svg>
+      <div style="flex:1;min-width:200px;">
+        <table class="tbl" id="freq-tbl"><thead><tr><th style="text-align:left">Outcome</th><th>Freq</th><th>% of total</th><th>P(x) = f/n</th></tr></thead>
+        <tbody id="freq-tbody"></tbody>
+        <tfoot><tr><td class="tot" colspan="3">Total (n)</td><td class="tot" id="freq-sum">1.000</td></tr></tfoot>
+        </table>
+        <div class="insight" id="freq-insight" style="margin-top:10px;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:20px;" id="cumul-panel">
+    <div class="panel-title">Cumulative Probability Explorer</div>
+    <p class="muted">Probabilities often need to be added across ranges. P(X ≤ k) answers "at most k", P(X ≥ k) answers "at least k", and P(a ≤ X ≤ b) answers "between a and b". The table above gives individual probabilities — add them for any range.</p>
+    <div id="cumul-qs" style="display:flex;flex-direction:column;gap:14px;margin-top:14px;"></div>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 3: ADDITION LAW ═══════ -->
+<section id="s2">
+  <div class="sec-header">
+    <div class="sec-title"><span class="num">3</span> Addition Law</div>
+  </div>
+  <div id="s2-story" class="story-box"></div>
+  <div class="formula"><span class="fl">Addition Law</span><div class="eq">P(<span class="vr">A</span> <span class="op">∪</span> <span class="vr">B</span>) = P(<span class="vr">A</span>) + P(<span class="vr">B</span>) − P(<span class="vr">A</span> <span class="op">∩</span> <span class="vr">B</span>)</div></div>
+
+  <div class="grid2">
+    <div>
+      <div class="panel">
+        <div class="panel-title">Interactive Venn Diagram</div>
+        <p class="muted">Set P(A) and P(B) freely. P(A∩B) is automatically constrained to a valid range.</p>
+        <div class="controls" style="flex-direction:column;gap:12px;">
+          <div class="ctrl"><label>P(A): <span class="val" id="vpa-v">0.30</span></label><input type="range" id="vpa" min="1" max="90" value="30" oninput="updateVenn()"></div>
+          <div class="ctrl"><label>P(B): <span class="val" id="vpb-v">0.20</span></label><input type="range" id="vpb" min="1" max="90" value="20" oninput="updateVenn()"></div>
+          <div class="ctrl"><label>P(A∩B): <span class="val" id="vpab-v">0.10</span> <span style="font-size:.72rem;color:var(--muted);" id="vpab-range"></span></label><input type="range" id="vpab" min="0" max="20" value="10" oninput="updateVenn()"></div>
+        </div>
+        <div class="result">
+          <div class="rl">P(A) + P(B) − P(A∩B)</div>
+          <div class="rh">P(A∪B) = <span id="venn-union">0.40</span></div>
+          <div class="rl" id="venn-me" style="color:var(--teal);font-size:.82rem;margin-top:4px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="svgwrap" id="venn-svg-wrap"></div>
+  </div>
+
+  <hr class="div">
+  <div class="panel">
+    <div class="panel-title">Worked Example — Adjust the Numbers</div>
+    <div id="s2-example" style="margin-bottom:16px;"></div>
+    <div class="controls">
+      <div class="ctrl"><label>Event A count: <span class="val" id="ex-a-v">5</span></label><input type="range" id="ex-a" min="0" max="25" value="5" oninput="updateAddEx()"></div>
+      <div class="ctrl"><label>Event B count: <span class="val" id="ex-b-v">6</span></label><input type="range" id="ex-b" min="0" max="25" value="6" oninput="updateAddEx()"></div>
+      <div class="ctrl"><label>Both A&amp;B: <span class="val" id="ex-ab-v">2</span></label><input type="range" id="ex-ab" min="0" max="15" value="2" oninput="updateAddEx()"></div>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="sl">P(A)</div><div class="sv" id="add-pa">0.10</div></div>
+      <div class="arrow">+</div>
+      <div class="step"><div class="sl">P(B)</div><div class="sv" id="add-pb">0.12</div></div>
+      <div class="arrow">−</div>
+      <div class="step"><div class="sl">P(A∩B)</div><div class="sv" id="add-pab">0.04</div></div>
+      <div class="arrow">=</div>
+      <div class="step hi"><div class="sl">P(A∪B)</div><div class="sv" id="add-union">0.18</div></div>
+    </div>
+    <div class="result"><div class="rh" id="add-interp">18% of employees need coaching.</div></div>
+  </div>
+
+  <hr class="div">
+  <div class="panel">
+    <div class="panel-title">Inverse Problems — Rearranging the Addition Law</div>
+    <p class="muted">P(A∪B) = P(A) + P(B) − P(A∩B) can be rearranged to find any unknown. Three worked business cases below.</p>
+    <div class="story-box" style="margin-bottom:16px;">
+      <div class="story-label">Problem 1 — Find P(A)</div>
+      <div class="story-title">Retail Customer Complaints</div>
+      <p>A customer survey finds that <strong>42% of customers are unhappy with either store layout (L) or checkout speed (C)</strong>. It is known that 14% complain about checkout speed and 8% complain about both. What fraction are unhappy specifically with the store layout?</p>
+      <div class="formula" style="margin-top:12px;"><span class="fl">Rearranged</span><div class="eq">P(L) = P(L∪C) − P(C) + P(L∩C) = 0.42 − 0.14 + 0.08 = <span class="hi">0.36</span></div></div>
+      <div class="insight" style="margin-top:8px;"><span class="ic">✅</span><p>36% of customers are dissatisfied with store layout. Cross-check: P(L∪C) = 0.36 + 0.14 − 0.08 = 0.42 ✓. Management should prioritise a store layout review.</p></div>
+    </div>
+    <div class="story-box" style="margin-bottom:16px;">
+      <div class="story-label">Problem 2 — Find P(A∩B)</div>
+      <div class="story-title">HR Compliance Audit</div>
+      <p>An HR audit at a <strong>200-person firm</strong> shows that 38% of employees either missed a mandatory training session (T) or received a negative performance review (R). 22% missed training; 25% received a negative review. How many employees had both problems?</p>
+      <div class="formula" style="margin-top:12px;"><span class="fl">Rearranged</span><div class="eq">P(T∩R) = P(T) + P(R) − P(T∪R) = 0.22 + 0.25 − 0.38 = <span class="hi">0.09</span></div></div>
+      <div class="insight" style="margin-top:8px;"><span class="ic">✅</span><p>9% of staff — <strong>0.09 × 200 = 18 employees</strong> — had both issues. These are the highest-risk individuals for the compliance team to address first.</p></div>
+    </div>
+    <div class="story-box">
+      <div class="story-label">Problem 3 — Verify Consistency</div>
+      <div class="story-title">Logistics Operations Check</div>
+      <p>A logistics manager reports: 60% of shipments were late (L), 45% had damaged packaging (D), 15% had both, and 90% had at least one problem. Is this internally consistent?</p>
+      <div class="formula" style="margin-top:12px;"><span class="fl">Check</span><div class="eq">P(L∪D) = P(L) + P(D) − P(L∩D) = 0.60 + 0.45 − 0.15 = <span class="hi">0.90</span> ✓</div></div>
+      <div class="insight" style="margin-top:8px;"><span class="ic">✅</span><p>The numbers are perfectly consistent. Every figure the manager reported satisfies the Addition Law. If the reported union had been, say, 0.85, we could have immediately detected a data error: 0.60 + 0.45 − 0.15 ≠ 0.85.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 4: CONDITIONAL PROBABILITY ═══════ -->
+<section id="s3">
+  <div class="sec-header">
+    <div class="sec-title"><span class="num">4</span> Conditional Probability</div>
+  </div>
+  <div id="s3-story" class="story-box"></div>
+  <div class="formula"><span class="fl">Conditional Probability</span><div class="eq">P(<span class="vr">A</span> | <span class="vr">B</span>) = P(<span class="vr">A</span> <span class="op">∩</span> <span class="vr">B</span>) / P(<span class="vr">B</span>)</div></div>
+
+  <div class="panel">
+    <div class="panel-title">Police Department Promotions — Click any cell</div>
+    <p class="muted">A city police department is facing a discrimination lawsuit. Female officers claim they are promoted at a lower rate. Click any joint-probability cell to calculate the relevant conditional probability.</p>
+    <div style="overflow-x:auto;">
+      <table class="tbl" id="police-tbl">
+        <thead><tr><th></th><th>Men (M)</th><th>Women (W)</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="text-align:left;color:var(--txt);font-weight:500;">Promoted (A)</td>
+            <td class="joint" onclick="showCond(this,288,960,1200,'P(A|M)','P(M|A)')">0.24</td>
+            <td class="joint" onclick="showCond(this,36,240,1200,'P(A|W)','P(W|A)')">0.03</td>
+            <td class="marg">0.27</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;color:var(--txt);font-weight:500;">Not Promoted (Aᶜ)</td>
+            <td class="joint" onclick="showCond(this,672,960,1200,'P(Aᶜ|M)','P(M|Aᶜ)')">0.56</td>
+            <td class="joint" onclick="showCond(this,204,240,1200,'P(Aᶜ|W)','P(W|Aᶜ)')">0.17</td>
+            <td class="marg">0.73</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;color:var(--yellow);font-weight:600;">Total</td>
+            <td class="marg">0.80</td>
+            <td class="marg">0.20</td>
+            <td class="tot">1.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="cond-result" class="result" style="display:none;margin-top:12px;">
+      <div class="rl">Cell: <span id="cr-desc">—</span></div>
+      <div class="rl">Joint probability P(A∩B) = <span id="cr-joint">—</span></div>
+      <div class="rl">Row marginal P(row) = <span id="cr-rm">—</span> &nbsp;|&nbsp; Col marginal P(col) = <span id="cr-cm">—</span></div>
+      <div class="rh" id="cr-calc">—</div>
+    </div>
+    <div class="info-row" style="margin-top:14px;">
+      <div class="info-cell"><div class="in" style="color:var(--blue)">0.27</div><div class="il">Overall promotion rate</div></div>
+      <div class="info-cell"><div class="in" style="color:var(--green)">0.300</div><div class="il">P(Promoted | Male)</div></div>
+      <div class="info-cell"><div class="in" style="color:var(--coral)">0.150</div><div class="il">P(Promoted | Female)</div></div>
+      <div class="info-cell"><div class="in" style="color:var(--purple)">0.889</div><div class="il">P(Male | Promoted)</div></div>
+      <div class="info-cell"><div class="in" style="color:var(--yellow)">0.111</div><div class="il">P(Female | Promoted)</div></div>
+    </div>
+    <div class="panel" style="margin-top:14px;border-color:rgba(247,201,72,.25)">
+      <div class="panel-title" style="color:var(--yellow)">All Four Conditional Probabilities — Unpacked</div>
+      <div class="result" style="margin-bottom:0;">
+        <div class="rl"><span style="color:var(--green);font-weight:600">P(Promoted | Male)   = 288/960 = 0.300</span> → 30.0%  — the promotion <em>rate</em> for male officers</div>
+        <div class="rl"><span style="color:var(--coral);font-weight:600">P(Promoted | Female) = 36/240  = 0.150</span> → 15.0%  — the promotion rate for female officers</div>
+        <div class="rl" style="margin-top:8px;"><span style="color:var(--purple);font-weight:600">P(Male | Promoted)   = 288/324 = 0.889</span> → 88.9%  — of those actually promoted, who are male?</div>
+        <div class="rl"><span style="color:var(--yellow);font-weight:600">P(Female | Promoted) = 36/324  = 0.111</span> → 11.1%  — of those actually promoted, who are female?</div>
+      </div>
+    </div>
+    <div class="insight" style="margin-top:14px;border-color:rgba(185,131,255,.3);background:rgba(185,131,255,.06)"><span class="ic">🔗</span><p><strong style="color:var(--purple)">Managerial Implications &amp; Bridge to Bayes Theorem.</strong> The promotion <em>rate</em> for women (15%) is exactly half that for men (30%) — this is the discrimination evidence. But a second lens: P(Male|Promoted) = 88.9%. Men are 80% of the force yet account for 89% of promotions — they are over-represented among promotees relative to their workforce share. This is Bayes' theorem in action: a prior of 80% (share of force) updated by the evidence of promotion gives a posterior of 88.9%. We formalise this in the Bayes Theorem tab.</p></div>
+  </div>
+
+  <hr class="div">
+  <div class="panel">
+    <div class="panel-title">MBA Admissions Study — Click a cell</div>
+    <p class="muted">1,305 GMAT respondents. Undergraduate major vs enrollment intent. Click any cell to see the two conditional probabilities it generates.</p>
+    <div style="overflow-x:auto;">
+      <table class="tbl" id="gmat-tbl">
+        <thead><tr><th></th><th>Business</th><th>Engineering</th><th>Other</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="text-align:left;color:var(--txt);font-weight:500;">Full-Time</td>
+            <td class="joint" onclick="showGMAT(this,352,800,502,'Full-Time','Business')">352</td>
+            <td class="joint" onclick="showGMAT(this,197,800,358,'Full-Time','Engineering')">197</td>
+            <td class="joint" onclick="showGMAT(this,251,800,445,'Full-Time','Other')">251</td>
+            <td class="marg">800</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;color:var(--txt);font-weight:500;">Part-Time</td>
+            <td class="joint" onclick="showGMAT(this,150,505,502,'Part-Time','Business')">150</td>
+            <td class="joint" onclick="showGMAT(this,161,505,358,'Part-Time','Engineering')">161</td>
+            <td class="joint" onclick="showGMAT(this,194,505,445,'Part-Time','Other')">194</td>
+            <td class="marg">505</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;color:var(--yellow);font-weight:600;">Total</td>
+            <td class="marg">502</td><td class="marg">358</td><td class="marg">445</td>
+            <td class="tot">1305</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="gmat-result" class="result" style="display:none;margin-top:10px;">
+      <div class="rl rh" id="gr1">—</div>
+      <div class="rl rh" id="gr2">—</div>
+    </div>
+    <div class="insight" style="margin-top:14px;"><span class="ic">💼</span><p><strong>Managerial Implication:</strong> Knowing that 70% of Business major applicants choose Full-Time enrollment (vs. only ~30% for Part-Time) has real resource consequences — faculty hiring, classroom capacity, and scholarship budgets all depend on enrollment-type forecasts. But admissions directors face the <em>reverse</em> question: given that a student has applied Full-Time, what is the probability they majored in Business? That is P(Business | Full-Time) = 352/800 = <strong>44%</strong> — flipping the conditioning. This is precisely what Bayes' Theorem systematises: <em>start with what you observe, work back to what you want to know.</em></p></div>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 5: INDEPENDENCE & MULTIPLICATION ═══════ -->
+<section id="s4">
+  <div class="sec-header">
+    <div class="sec-title"><span class="num">5</span> Independence &amp; Multiplication</div>
+  </div>
+  <div id="s4-story" class="story-box"></div>
+
+  <div class="grid2">
+    <div>
+      <div class="formula"><span class="fl">Multiplication (General)</span><div class="eq">P(<span class="vr">A</span> <span class="op">∩</span> <span class="vr">B</span>) = P(<span class="vr">B</span>) × P(<span class="vr">A</span>|<span class="vr">B</span>)</div></div>
+      <div class="formula"><span class="fl">Independent Events</span><div class="eq">P(<span class="vr">A</span> <span class="op">∩</span> <span class="vr">B</span>) = P(<span class="vr">A</span>) × P(<span class="vr">B</span>)</div></div>
+      <div class="panel" style="margin-top:14px;">
+        <div class="panel-title">Newspaper Subscriptions</div>
+        <p class="muted">84% subscribe to daily. Of daily readers, 75% also take Sunday. What % subscribe to both?</p>
+        <div class="controls">
+          <div class="ctrl"><label>P(Daily): <span class="val" id="nd-v">0.84</span></label><input type="range" id="nd" min="10" max="99" value="84" oninput="updateNews()"></div>
+          <div class="ctrl"><label>P(Sunday|Daily): <span class="val" id="nsd-v">0.75</span></label><input type="range" id="nsd" min="5" max="99" value="75" oninput="updateNews()"></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="sl">P(Daily)</div><div class="sv" id="nD">0.84</div></div>
+          <div class="arrow">×</div>
+          <div class="step"><div class="sl">P(Sun|Daily)</div><div class="sv" id="nSD">0.75</div></div>
+          <div class="arrow">=</div>
+          <div class="step hi"><div class="sl">P(Both)</div><div class="sv" id="nBoth">0.63</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="panel-title">Credit Card — Next X Customers</div>
+        <p class="muted">80% of customers use a credit card. Assuming independence, what is the probability that the next X customers ALL use a credit card?</p>
+        <div class="controls">
+          <div class="ctrl"><label>P(uses card): <span class="val" id="cc-p-v">0.80</span></label><input type="range" id="cc-p" min="10" max="99" value="80" oninput="updateCC()"></div>
+          <div class="ctrl"><label>Next X customers: <span class="val" id="cc-x-v">2</span></label><input type="range" id="cc-x" min="1" max="8" value="2" oninput="updateCC()"></div>
+        </div>
+        <div class="result">
+          <div class="rl" id="cc-formula">P(0.80)² = 0.64</div>
+          <div class="rh">P(all X use card) = <span id="cc-ans">0.6400</span></div>
+        </div>
+        <div id="cc-chart" style="margin-top:12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+  <h3>🔍 Mutually Exclusive vs Independent — Side-by-Side</h3>
+  <div class="grid2">
+    <div class="panel" style="border-color:rgba(255,107,107,.3)">
+      <div class="panel-title" style="color:var(--coral);">Mutually Exclusive Events</div>
+      <p class="muted" style="margin-bottom:10px;"><strong style="color:var(--txt);">Story:</strong> A product is classified as either <em>Premium</em> (P=0.35) or <em>Standard</em> (P=0.65). It cannot be both. P(Premium ∩ Standard) = 0.</p>
+      <svg viewBox="0 0 300 140" width="100%" height="140" style="display:block;">
+        <rect x="5" y="5" width="290" height="130" rx="6" fill="none" stroke="#2a2a50" stroke-width="1"/>
+        <ellipse cx="72" cy="68" rx="58" ry="46" fill="rgba(88,166,255,.2)" stroke="#58a6ff" stroke-width="2"/>
+        <ellipse cx="228" cy="68" rx="58" ry="46" fill="rgba(255,107,107,.2)" stroke="#ff6b6b" stroke-width="2"/>
+        <text x="72" y="66" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold" font-family="sans-serif">Premium</text>
+        <text x="72" y="81" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif">P = 0.35</text>
+        <text x="228" y="66" text-anchor="middle" fill="#ff6b6b" font-size="12" font-weight="bold" font-family="sans-serif">Standard</text>
+        <text x="228" y="81" text-anchor="middle" fill="#ff6b6b" font-size="11" font-family="sans-serif">P = 0.65</text>
+        <text x="150" y="125" text-anchor="middle" fill="#8888aa" font-size="10" font-family="sans-serif">No overlap — P(A∩B) = 0</text>
+      </svg>
+      <div class="insight" style="margin-top:8px;"><span class="ic">⚠️</span><p><strong style="color:var(--coral)">Mutually exclusive events with positive probability are always dependent.</strong> Here, P(Standard|Premium) = 0 ≠ P(Standard) = 0.65. Knowing Premium occurred makes Standard impossible — that is maximum dependence. <em>One mathematical caveat:</em> if P(A) = 0 or P(B) = 0, then P(A∩B) = 0 = P(A)×P(B) trivially holds — but a zero-probability event is of no practical interest. For any real business scenario where both events can occur, mutually exclusive implies dependent, without exception.</p></div>
+      <div class="result" style="margin-top:8px;">
+        <div class="rl">P(A∪B) = 0.35 + 0.65 = <span>1.00</span></div>
+        <div class="rl">P(A|B) = 0/0.65 = <span>0.00</span> ≠ P(A) → Dependent!</div>
+      </div>
+    </div>
+    <div class="panel" style="border-color:rgba(92,237,138,.3)">
+      <div class="panel-title" style="color:var(--green);">Independent Events</div>
+      <p class="muted" style="margin-bottom:10px;"><strong style="color:var(--txt);">Story:</strong> Machine A passes QC (P=0.90) and Machine B passes QC (P=0.80). Machines operate independently.</p>
+      <svg viewBox="0 0 300 140" width="100%" height="140" style="display:block;">
+        <rect x="5" y="5" width="290" height="130" rx="6" fill="none" stroke="#2a2a50" stroke-width="1"/>
+        <ellipse cx="130" cy="70" rx="85" ry="52" fill="rgba(88,166,255,.18)" stroke="#58a6ff" stroke-width="2"/>
+        <ellipse cx="195" cy="70" rx="75" ry="48" fill="rgba(92,237,138,.18)" stroke="#5ced8a" stroke-width="2"/>
+        <text x="90" y="68" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif">Machine A</text>
+        <text x="90" y="82" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif">P=0.90</text>
+        <text x="165" y="68" text-anchor="middle" fill="#f7c948" font-size="11" font-weight="bold" font-family="sans-serif">0.72</text>
+        <text x="236" y="68" text-anchor="middle" fill="#5ced8a" font-size="11" font-family="sans-serif">Machine B</text>
+        <text x="236" y="82" text-anchor="middle" fill="#5ced8a" font-size="11" font-family="sans-serif">P=0.80</text>
+      </svg>
+      <div class="insight" style="margin-top:8px;"><span class="ic">✅</span><p>Independent events: knowing A passed tells us <em>nothing</em> about B. P(B|A) = P(B) = 0.80.</p></div>
+      <div class="result" style="margin-top:8px;">
+        <div class="rl">P(A∩B) = P(A) × P(B) = 0.90 × 0.80 = <span>0.72</span> &nbsp;← the shaded overlap area</div>
+        <div class="rl">P(B|A) = 0.72/0.90 = <span>0.80</span> = P(B) → Independent ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:20px;">
+    <div class="panel-title">Independence Test Calculator</div>
+    <p class="muted">Enter P(A), P(B) and P(A∩B). The tool checks if the events are independent.</p>
+    <div class="controls">
+      <div class="ctrl"><label>P(A): <span class="val" id="it-a-v">0.40</span></label><input type="range" id="it-a" min="1" max="99" value="40" oninput="testIndep()"></div>
+      <div class="ctrl"><label>P(B): <span class="val" id="it-b-v">0.30</span></label><input type="range" id="it-b" min="1" max="99" value="30" oninput="testIndep()"></div>
+      <div class="ctrl"><label>P(A∩B): <span class="val" id="it-ab-v">0.12</span></label><input type="range" id="it-ab" min="0" max="50" value="12" oninput="testIndep()"></div>
+    </div>
+    <div class="result" id="it-result"></div>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 6: BAYES' THEOREM ═══════ -->
+<section id="s5">
+  <div class="sec-header">
+    <div class="sec-title"><span class="num">6</span> Bayes' Theorem</div>
+  </div>
+  <div class="insight" style="margin-bottom:20px;border-color:rgba(185,131,255,.3);background:rgba(185,131,255,.06)">
+    <span class="ic">🧠</span>
+    <p><strong style="color:var(--purple)">The essence of Bayesian thinking:</strong> We start with a prior belief about the world. We observe new evidence. We update our belief using the likelihood of that evidence under each hypothesis. The result — the posterior — is a mathematically precise, rational update of our prior. Three business cases follow, increasing in complexity.</p>
+  </div>
+  <div class="formula"><span class="fl">Bayes' Theorem</span><div class="eq">P(<span class="vr">Aᵢ</span>|<span class="vr">B</span>) = <span class="hi">P(Aᵢ) × P(B|Aᵢ)</span> / <span class="op">Σ</span>[ P(Aⱼ) × P(B|Aⱼ) ]</div></div>
+
+  <!-- Case 1: Supplier -->
+  <div class="story-box" style="margin-bottom:16px;">
+    <div class="story-label">📖 Case 1 of 3</div>
+    <div class="story-title">⚙️ Supplier Quality — Who Sent the Defective Part?</div>
+    <p>Your factory sources components from two suppliers. <strong>Supplier 1</strong> ships 65% of your parts with a 2% defect rate. <strong>Supplier 2</strong> ships the remaining 35% but with a higher 5% defect rate. A machine just broke down due to a defective component. <em>Which supplier most likely sent it?</em> Before the breakdown you'd say 65% probability Supplier 1. After observing the defect, Bayes' theorem updates this based on each supplier's defect rate.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Case 1 — Supplier Quality: Live Posterior Calculator</div>
+    <p class="muted"><strong style="color:var(--txt)">Adjust the prior shares and defect rates below. The posterior updates instantly.</strong></p>
+    <div class="grid2">
+      <div>
+        <h3>Adjust Priors &amp; Defect Rates</h3>
+        <div class="controls" style="flex-direction:column;gap:10px;">
+          <div class="ctrl"><label>P(Supplier 1): <span class="val" id="bs1-v">0.65</span></label><input type="range" id="bs1" min="10" max="90" value="65" oninput="updateBayes()"></div>
+          <div class="ctrl"><label>P(Supplier 2) = 1 − P(S1): <span class="val" id="bs2-v">0.35</span></label></div>
+          <div class="ctrl"><label>P(Defect | S1): <span class="val" id="bd1-v">0.02</span></label><input type="range" id="bd1" min="1" max="30" value="2" oninput="updateBayes()"></div>
+          <div class="ctrl"><label>P(Defect | S2): <span class="val" id="bd2-v">0.05</span></label><input type="range" id="bd2" min="1" max="30" value="5" oninput="updateBayes()"></div>
+        </div>
+      </div>
+      <div>
+        <h3>Posterior Probabilities</h3>
+        <p class="muted">Given the part is defective, the probability it came from each supplier:</p>
+        <div class="pbar-wrap" style="margin-bottom:12px;">
+          <div class="pbar-head"><span class="pn">P(S1 | defective)</span><span class="pv" id="bp1">42.6%</span></div>
+          <div class="pbar"><div class="pbfill" id="bb1" style="width:42.6%;background:var(--blue);"></div></div>
+        </div>
+        <div class="pbar-wrap">
+          <div class="pbar-head"><span class="pn">P(S2 | defective)</span><span class="pv" id="bp2">57.4%</span></div>
+          <div class="pbar"><div class="pbfill" id="bb2" style="width:57.4%;background:var(--coral);"></div></div>
+        </div>
+        <div class="result" style="margin-top:12px;">
+          <div class="rl">P(defective) = <span id="bpd">0.0305</span></div>
+          <div class="rh" id="bconc">S2 is more likely source of the defect</div>
+        </div>
+      </div>
+    </div>
+    <h3>Step-by-Step Tabular Approach</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl">
+        <thead><tr><th>Event</th><th>Prior P(Aᵢ)</th><th>P(Defect|Aᵢ)</th><th>Joint P(Aᵢ∩Defect)</th><th>Posterior P(Aᵢ|Defect)</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--blue)">Supplier 1</td><td class="joint" id="bt-p1">0.65</td><td id="bt-l1">0.02</td><td class="joint" id="bt-j1">0.0130</td><td class="marg" id="bt-post1">0.4262</td></tr>
+          <tr><td style="color:var(--coral)">Supplier 2</td><td class="joint" id="bt-p2">0.35</td><td id="bt-l2">0.05</td><td class="joint" id="bt-j2">0.0175</td><td class="marg" id="bt-post2">0.5738</td></tr>
+          <tr><td class="tot" colspan="3">P(B) = Σ joints</td><td class="tot" id="bt-pb">0.0305</td><td class="tot">1.0000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr class="div">
+  <!-- Case 2: Bank Default -->
+  <div class="story-box" style="margin-bottom:16px;">
+    <div class="story-label">📖 Case 2 of 3</div>
+    <div class="story-title">🏦 Credit Card Default Risk</div>
+    <p>A bank issues credit cards to millions of customers. Historically, <strong>5 in every 100 cardholders eventually default</strong> — meaning they stop repaying and the bank absorbs the loss. The bank's risk team tracks one early-warning signal: missed monthly payments. Customers who will ultimately default almost always miss at least one payment (P(miss | default) ≈ 1.00). However, even reliable customers sometimes miss payments due to travel or oversight (P(miss | no default) ≈ 0.20). <em>When a customer misses a payment, should the bank flag the account? Use Bayes' theorem to calculate the updated default probability.</em></p>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Case 2 — Credit Card Default: Bayesian Risk Update</div>
+    <div class="insight" style="margin-bottom:12px;"><span class="ic">📌</span><p><strong>Fixed assumption:</strong> P(Miss payment | Default) = <strong>1.00</strong> — by definition, a defaulted customer has missed payments. This likelihood is treated as certain and does not change with the sliders.</p></div>
+    <div class="controls">
+      <div class="ctrl"><label>Prior P(Default): <span class="val" id="bk-pd-v">0.05</span></label><input type="range" id="bk-pd" min="1" max="40" value="5" oninput="updateBank()"></div>
+      <div class="ctrl"><label>P(Miss payment | No Default): <span class="val" id="bk-pm-v">0.20</span></label><input type="range" id="bk-pm" min="5" max="60" value="20" oninput="updateBank()"></div>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="pbar-wrap"><div class="pbar-head"><span class="pn">P(Default | Missed payment)</span><span class="pv" id="bk-post1" style="color:var(--coral);">20.0%</span></div><div class="pbar"><div class="pbfill" id="bk-bar1" style="width:20%;background:var(--coral);"></div></div></div>
+        <div class="pbar-wrap" style="margin-top:10px;"><div class="pbar-head"><span class="pn">P(No Default | Missed payment)</span><span class="pv" id="bk-post2" style="color:var(--green);">80.0%</span></div><div class="pbar"><div class="pbfill" id="bk-bar2" style="width:80%;background:var(--green);"></div></div></div>
+      </div>
+      <div class="result">
+        <div class="rl">Prior P(Default): <span id="bk-rp">0.05</span></div>
+        <div class="rl">After missing a payment:</div>
+        <div class="rh">Updated P(Default) = <span id="bk-rpost">20.0%</span></div>
+        <div class="rl" id="bk-dec" style="margin-top:6px;font-size:.82rem;color:var(--yellow);"></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+  <!-- Case 3: Consulting Bid -->
+  <div class="story-box" style="margin-bottom:16px;">
+    <div class="story-label">📖 Case 3 of 3</div>
+    <div class="story-title">📋 The ₹40 Crore Government Contract</div>
+    <p>A management consulting firm has submitted a bid for a major government infrastructure project. Based on past bid outcomes, they estimate a 50/50 chance of winning. The government agency then requests additional technical documentation — a signal they historically send for 75% of bids they plan to accept, and 40% of bids they plan to reject. The request has just arrived. <em>What is the updated probability of winning? And of losing?</em> Note that both posteriors must sum to exactly 1.000 — a useful check of your arithmetic.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Case 3 — Consulting Bid: Update Both Posteriors</div>
+    <div class="controls">
+      <div class="ctrl"><label>Prior P(Win): <span class="val" id="cb-pw-v">0.50</span></label><input type="range" id="cb-pw" min="10" max="90" value="50" oninput="updateBid()"></div>
+      <div class="ctrl"><label>P(Info | Win): <span class="val" id="cb-iw-v">0.75</span></label><input type="range" id="cb-iw" min="10" max="99" value="75" oninput="updateBid()"></div>
+      <div class="ctrl"><label>P(Info | Lose) = 1 − P(Info | Win): <span class="val" id="cb-il-v" style="color:var(--muted);">0.25</span></label></div>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="pbar-wrap"><div class="pbar-head"><span class="pn">P(Win | Info requested)</span><span class="pv" id="cb-pw-post" style="color:var(--green);">65.2%</span></div><div class="pbar"><div class="pbfill" id="cb-bar1" style="width:65.2%;background:var(--green);"></div></div></div>
+        <div class="pbar-wrap" style="margin-top:10px;"><div class="pbar-head"><span class="pn">P(Lose | Info requested)</span><span class="pv" id="cb-pl-post" style="color:var(--coral);">34.8%</span></div><div class="pbar"><div class="pbfill" id="cb-bar2" style="width:34.8%;background:var(--coral);"></div></div></div>
+      </div>
+      <div class="result">
+        <div class="rl">P(Info) = <span id="cb-pi">0.575</span></div>
+        <div class="rl">P(Win|Info) = P(Win)×P(Info|Win) / P(Info)</div>
+        <div class="rh">= <span id="cb-calc">0.5×0.75 / 0.575 = 0.652</span></div>
+        <div class="rl" style="margin-top:6px;font-size:.82rem;">Sum check: <span id="cb-sum">0.652 + 0.348 = 1.000 ✓</span></div>
+      </div>
+    </div>
+    <div class="insight"><span class="ic">📈</span><p>Prior belief: 50% chance of winning. After the info request signal: <em id="cb-update-txt">65.2%</em> — the evidence improves your estimate. This is Bayesian updating in action.</p></div>
+  </div>
+</section>
+
+<script>
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function show(i){
+  document.querySelectorAll('section').forEach((s,j)=>s.classList.toggle('active',j===i));
+  document.querySelectorAll('#nav button').forEach((b,j)=>b.classList.toggle('active',j===i));
+}
+
+// ═══════════════════════════════════════════════════
+// MATH HELPERS
+// ═══════════════════════════════════════════════════
+function fact(n){
+  if(n<0)return NaN;
+  if(n===0||n===1)return 1;
+  let r=1; for(let i=2;i<=n;i++)r*=i; return r;
+}
+function comb(N,r){if(r>N||r<0)return 0; return fact(N)/(fact(r)*fact(N-r));}
+function perm(N,r){if(r>N||r<0)return 0; return fact(N)/fact(N-r);}
+
+// ═══════════════════════════════════════════════════
+// STORY DATA
+// ═══════════════════════════════════════════════════
+const stories = {
+  0:[ // Experiments & Events
+    {emoji:'⚡',title:'KP&L Power Plant Expansion',
+     text:`<p>The year is 2024. Kentucky Power & Light is racing against a summer heatwave. Rolling blackouts have already hit two industrial districts. The CEO approved an emergency plant expansion — but there's a catch: finish within <strong>10 months</strong> or face $2M in daily penalties.</p><p>The project has two sequential phases. <strong>Design</strong> could take 2, 3, or 4 months depending on regulatory approvals. <strong>Construction</strong> will take 6, 7, or 8 months depending on weather and labour. The project manager needs to map every possible scenario before committing resources.</p><p><em>The experiment: observing the actual completion times of both phases.</em></p>`,
+     s1l:'Design',s1o:[2,3,4],s1u:'mo',s2l:'Construction',s2o:[6,7,8],s2u:'mo',
+     probs:{'2,6':.15,'2,7':.15,'2,8':.05,'3,6':.10,'3,7':.20,'3,8':.05,'4,6':.05,'4,7':.10,'4,8':.15},
+     events:[{n:'C: ≤10 months (goal)',c:'#5ced8a',f:t=>t<=10},{n:'L: <10 months',c:'#58a6ff',f:t=>t<10},{n:'M: >10 months',c:'#ff6b6b',f:t=>t>10}],
+     interp:(d,c)=>{const t=d+c; return t<=10?`✅ Goal met! Project finishes in ${t} months.`:`❌ Penalty zone — ${t} months exceeds 10-month target.`;}},
+    {emoji:'🚀',title:'Startup Product Launch',
+     text:`<p>A tech startup is about to launch its first product. They've surveyed the market and identified two key uncertainties: the <strong>market condition</strong> (Booming or Cooling) and the <strong>customer response</strong> (Love it, Try it, Skip it).</p><p>The CEO asks: "Before we spend $500K on the launch campaign, what are all the ways this can play out?" The founding team sits down to map the full sample space.</p><p><em>The experiment: observing which market condition prevails AND which customer response emerges.</em></p>`,
+     s1l:'Market',s1o:['Boom','Cool'],s1u:'',s2l:'Response',s2o:['Love','Try','Skip'],s2u:'',
+     probs:{'Boom,Love':.25,'Boom,Try':.15,'Boom,Skip':.05,'Cool,Love':.10,'Cool,Try':.25,'Cool,Skip':.20},
+     events:[{n:'Success (Love it)',c:'#5ced8a',f:(a,b)=>b==='Love'},{n:'Engagement (Love or Try)',c:'#58a6ff',f:(a,b)=>b==='Love'||b==='Try'},{n:'Failure (Skip)',c:'#ff6b6b',f:(a,b)=>b==='Skip'}],
+     interp:(a,b)=>{ const p={'Boom,Love':.25,'Boom,Try':.15,'Boom,Skip':.05,'Cool,Love':.10,'Cool,Try':.25,'Cool,Skip':.20}; const msg={'Love':'🎉 Strong adoption — campaign ROI likely positive','Try':'🤔 Cautious trial — conversion uncertain','Skip':'📉 Low uptake — pivot strategy needed'}; return msg[b];}},
+    {emoji:'🏥',title:'Hospital Emergency Triage',
+     text:`<p>A busy urban hospital emergency department uses a two-stage triage system. When a patient arrives, the nurse first assesses <strong>severity</strong> (Critical, Moderate, or Minor). The doctor then determines the <strong>treatment track</strong> (Immediate, Scheduled, or Discharge).</p><p>The hospital administrator wants to understand all possible classification combinations to plan staffing levels and bed allocation. With 400 emergency arrivals per month, even small probability differences matter significantly.</p><p><em>The experiment: observing how a randomly selected patient is classified through both stages.</em></p>`,
+     s1l:'Severity',s1o:['Crit','Mod','Minor'],s1u:'',s2l:'Treatment',s2o:['Immed','Sched','DC'],s2u:'',
+     probs:{'Crit,Immed':.18,'Crit,Sched':.04,'Crit,DC':.01,'Mod,Immed':.15,'Mod,Sched':.20,'Mod,DC':.10,'Minor,Immed':.04,'Minor,Sched':.10,'Minor,DC':.18},
+     events:[{n:'Immediate care needed',c:'#ff6b6b',f:(a,b)=>b==='Immed'},{n:'Discharged same day',c:'#5ced8a',f:(a,b)=>b==='DC'},{n:'Critical patients',c:'#ff9f43',f:(a,b)=>a==='Crit'}],
+     interp:(a,b)=>({
+      'Crit,Immed':'🚨 Highest priority — bypasses waiting room',
+      'Crit,Sched':'⚠️ Critical but stable — scheduled for next slot',
+      'Crit,DC':'📋 Critical, stabilised — discharge with follow-up',
+      'Mod,Immed':'🔴 Moderate urgency — seen within 30 min',
+      'Mod,Sched':'🟡 Wait-listed — seen within 2 hours',
+      'Mod,DC':'🟢 Moderate, improving — discharged',
+      'Minor,Immed':'🔵 Minor but fast-tracked (capacity allows)',
+      'Minor,Sched':'⏳ Standard queue for minor cases',
+      'Minor,DC':'✅ Minor issue — treated and discharged'
+     }[`${a},${b}`]||'Classification recorded')
+    }
+  ],
+  1:[ // Assigning Probability
+    {emoji:'📞',title:'Call Centre Wait Times',text:`<p>A bank call centre measured how many customers were waiting at 9:00 AM each day for <strong>20 working days</strong>. The operations manager wants to use this historical data to assign probabilities for tomorrow's queue length — enabling better staffing decisions.</p><p>This is the <strong>relative frequency method</strong>: P(x) = (days that outcome occurred) / (total days observed).</p>`,data:[2,5,6,4,3],labels:['0 waiting','1 waiting','2 waiting','3 waiting','4 waiting'],xlabel:'Customers waiting',total:20,unit:'days'},
+    {emoji:'🏭',title:'Manufacturing Defect Counts',text:`<p>A precision parts factory inspects 50 units every shift. Quality engineers recorded how many defective units appeared each day across <strong>20 days</strong>. These frequencies drive their probability estimates for daily defect exposure, used in SPC (Statistical Process Control) charts.</p>`,data:[8,6,3,2,1],labels:['0 defects','1 defect','2 defects','3 defects','4+ defects'],xlabel:'Defects per shift',total:20,unit:'days'},
+    {emoji:'🚚',title:'Delivery Delay Categories',text:`<p>A logistics company tracks how many days late their deliveries arrive. Over <strong>30 shipments</strong>, they recorded the delay in each category. This data helps them set customer SLA promises and identify when to trigger penalty compensation automatically.</p>`,data:[4,8,10,5,3],labels:['On time','1 day late','2 days late','3 days late','4+ days late'],xlabel:'Delay category',total:30,unit:'shipments'},
+    {emoji:'⭐',title:'Customer Satisfaction Scores',text:`<p>After each support interaction, customers rate their experience from 1 to 5 stars. A product team reviewed <strong>25 recent interactions</strong> to estimate the probability distribution of ratings — to forecast their Net Promoter Score and set quarterly quality targets.</p>`,data:[1,3,4,9,8],labels:['1★ Poor','2★ Fair','3★ OK','4★ Good','5★ Excellent'],xlabel:'Rating',total:25,unit:'interactions'}
+  ],
+  2:[ // Addition Law
+    {emoji:'🏭',title:'Employee Performance Review',
+     text:`<p>After a quarterly review at a 50-person manufacturing plant, the HR manager found: <strong>5 workers submitted reports late</strong>, <strong>6 workers produced defective output</strong>, and <strong>2 workers did both</strong>. The manager wants to flag anyone with either problem for a coaching session. Simply adding 5+6=11 would double-count the 2 with both issues — the Addition Law corrects this.</p>`,
+     total:50,alabel:'Late submissions',blabel:'Defective output',interp:(u,tot)=>`${(u*100).toFixed(1)}% of the workforce — ${Math.round(u*tot)} out of ${tot} employees — require performance coaching.`},
+    {emoji:'✈️',title:'Airline Flight Delays',
+     text:`<p>An airline's operations team analysed 200 recent flights. <strong>40 were delayed due to weather</strong>, <strong>30 were delayed due to technical faults</strong>, and <strong>8 suffered both causes simultaneously</strong>. Regulators need the fraction of flights with at least one delay. Adding 40+30 double-counts the 8 dual-cause flights.</p>`,
+     total:200,alabel:'Weather delays',blabel:'Technical delays',interp:(u,tot)=>`${(u*100).toFixed(1)}% of flights — ${Math.round(u*tot)} out of ${tot} — experienced at least one delay cause.`},
+    {emoji:'🎓',title:'Student Academic Risk',
+     text:`<p>A university risk committee reviewed 100 students. <strong>22 failed their midterm</strong>, <strong>18 had attendance below 75%</strong>, and <strong>8 had both problems</strong>. The dean flags every student with either issue for academic support. Without the Addition Law, simply adding 22+18=40 would overcount by 8.</p>`,
+     total:100,alabel:'Failed midterm',blabel:'Low attendance',interp:(u,tot)=>`${(u*100).toFixed(1)}% of students — ${Math.round(u*tot)} out of ${tot} — are flagged for academic support.`}
+  ],
+  3:[ // Conditional Probability
+    {emoji:'👮',title:'Police Department Promotions',
+     text:`<p>A city's police department faces a discrimination lawsuit. Female officers argue that women receive promotions at a lower rate than men — not because of lower performance, but because of gender bias. The city counters that fewer women are on the force, so fewer absolute promotions is expected. <strong>Who is right?</strong></p><p>Conditional probability cuts through the noise: we need <em>rates</em>, not raw counts. P(Promoted | Male) versus P(Promoted | Female) tells the true story.</p>`},
+    {emoji:'📚',title:'MBA Admissions Analysis',
+     text:`<p>A business school's admissions office wants to understand the relationship between undergraduate major and MBA enrollment preference. Do engineering students disproportionately prefer full-time programs? Does a business background predict part-time enrollment? Conditional probabilities from a 1,305-student dataset reveal the answers.</p><p>Click any cell to see both conditional probabilities it generates.</p>`},
+  ],
+  4:[ // Independence
+    {emoji:'📰',title:'Newspaper Subscription Study',
+     text:`<p>A media company studies household subscription patterns. They know 84% of households in a target neighbourhood subscribe to the daily edition. Among those daily subscribers, 75% also take the Sunday edition. These subscriptions are <em>not</em> independent — daily subscribers are predisposed toward Sunday reading. The multiplication law handles dependent events.</p>`},
+    {emoji:'⛽',title:'Service Station Credit Cards',
+     text:`<p>A service station manager tracks payment methods. Historical data shows 80% of customers pay by credit card when buying petrol. If we assume each customer's choice is <em>independent</em> of others, we can use the multiplication law for independent events. The manager wants to know: what's the probability the next X customers all pay by card?</p>`},
+    {emoji:'🔧',title:'Manufacturing Quality Control',
+     text:`<p>A factory has two independent quality checkpoints. Machine A passes QC with probability 0.90; Machine B independently passes with probability 0.80. Since the machines operate on separate assembly lines with no influence on each other, their pass/fail outcomes are independent.</p>`}
+  ],
+  5:[ // Bayes
+    {emoji:'⚙️',title:'Supplier Quality — Who Sent the Bad Part?',
+     text:`<p>Your factory sources components from two suppliers. <strong>Supplier 1</strong> ships 65% of your parts and historically has a 2% defect rate. <strong>Supplier 2</strong> ships the remaining 35% but has a higher 5% defect rate. A machine just broke down because of a defective component. Your quality team pulls the part — it's bad. <em>Which supplier most likely sent it?</em></p><p>Before the breakdown, you'd assign 65% probability to Supplier 1. But after observing the defect, Bayes' theorem lets you update this belief based on each supplier's defect rate.</p>`},
+    {emoji:'🏦',title:'Bank Credit Card Risk',text:''},
+    {emoji:'📋',title:'Consulting Firm Bid',text:''}
+  ]
+};
+
+// current story indices
+const storyIdx = [0,0,0,0,0,0];
+
+function nextStory(tab){
+  const arr = stories[tab];
+  storyIdx[tab] = (storyIdx[tab]+1) % arr.length;
+  renderStory(tab);
+}
+
+function renderStory(tab){
+  const s = stories[tab][storyIdx[tab]];
+  const dots = stories[tab].map((_,i)=>`<div class="story-dot${i===storyIdx[tab]?' active':''}" onclick="storyIdx[${tab}]=${i};renderStory(${tab})"></div>`).join('');
+  const html = `<div class="story-label">📖 Story ${storyIdx[tab]+1} of ${stories[tab].length}</div>
+    <div class="story-title">${s.emoji} ${s.title}</div>
+    ${s.text}
+    <div class="story-nav">${dots}</div>`;
+  const el = document.getElementById(`s${tab}-story`);
+  if(el) el.innerHTML = html;
+  // Tab-specific render after story change
+  if(tab===0) renderTree();
+  if(tab===1){freqData=[...stories[1][storyIdx[1]].data];renderFreq();}
+  if(tab===2) renderAddEx();
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 1 — EXPERIMENTS & EVENTS TREE
+// ═══════════════════════════════════════════════════
+let selectedEvent = null;
+
+function renderFreqTable(){
+  const s = stories[0][storyIdx[0]];
+  const s1 = s.s1o, s2 = s.s2o;
+  // Build table of all outcomes with probabilities
+  let rows='';
+  const entries = Object.entries(s.probs);
+  entries.forEach(([key,p])=>{
+    const parts = key.split(',');
+    const a = parts[0], b = parts[1];
+    const total = (!isNaN(a) && !isNaN(b)) ? Number(a)+Number(b) : `${a}+${b}`;
+    rows+=`<tr>
+      <td style="color:var(--txt);text-align:left">(${a}, ${b})</td>
+      <td style="color:var(--blue)">${a} ${s.s1u}</td>
+      <td style="color:var(--yellow)">${b} ${s.s2u}</td>
+      <td style="color:var(--green);font-weight:600">${total}${s.s1u}</td>
+      <td style="color:var(--purple);font-weight:600">${p.toFixed(2)}</td>
+    </tr>`;
+  });
+  const totalP = entries.reduce((sum,[,p])=>sum+p,0);
+  document.getElementById('s0-freq-table').innerHTML=`
+    <div class="panel">
+      <div class="panel-title">Relative Frequency Table — all sample outcomes</div>
+      <p class="muted" style="margin-bottom:12px;">These probabilities are estimated from historical data. Each row is one possible outcome of the two-stage experiment. Use this table to read the probability of each path in the tree below.</p>
+      <div style="overflow-x:auto;">
+        <table class="tbl">
+          <thead><tr>
+            <th>Outcome</th><th>${s.s1l}</th><th>${s.s2l}</th><th>Combined</th><th>P(outcome)</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+          <tfoot><tr>
+            <td class="tot" colspan="4">Total (must = 1.00)</td>
+            <td class="tot">${totalP.toFixed(2)}</td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:10px;font-size:.82rem;">👇 Now click any leaf node in the tree below to highlight that path and see its probability.</p>
+    </div>`;
+}
+
+function renderTree(){
+  const s = stories[0][storyIdx[0]];
+  const s1 = s.s1o, s2 = s.s2o;
+  const n = s1.length * s2.length;
+  const leafH = Math.max(72, Math.round(600/n));
+  const H = 30 + n * leafH;
+  const W=920;
+  const rootX=52, rootY=Math.round(H/2);
+  const s1X=210, s2X=460, lblX=600, probX=750;
+  // evenly space all leaf nodes
+  const leafYs = [];
+  for(let i=0;i<n;i++) leafYs.push(28 + i*leafH + Math.round(leafH/2));
+  // group leaf Ys by stage1 parent
+  const s1Y = [];
+  for(let i=0;i<s1.length;i++){
+    const group = leafYs.slice(i*s2.length,(i+1)*s2.length);
+    s1Y.push(Math.round(group.reduce((a,b)=>a+b,0)/group.length));
+  }
+  const colors=['#5ced8a','#f7c948','#b983ff','#48dbfb','#ff9f43'];
+  let svg=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" id="tree-svg">`;
+  // Draw lines first
+  for(let i=0;i<s1.length;i++){
+    svg+=`<line x1="${rootX+18}" y1="${rootY}" x2="${s1X-20}" y2="${s1Y[i]}" stroke="#3a3a60" stroke-width="2" class="path-line" id="line-r-${i}"/>`;
+  }
+  for(let i=0;i<s1.length;i++){
+    for(let j=0;j<s2.length;j++){
+      const leafIdx=i*s2.length+j;
+      svg+=`<line x1="${s1X+20}" y1="${s1Y[i]}" x2="${s2X-20}" y2="${leafYs[leafIdx]}" stroke="#3a3a60" stroke-width="1.8" class="path-line" id="line-${i}-${j}"/>`;
+    }
+  }
+  // Root node — larger
+  svg+=`<g style="cursor:default">
+    <circle cx="${rootX}" cy="${rootY}" r="18" fill="#1c1c3a" stroke="#58a6ff" stroke-width="2.5"/>
+    <text x="${rootX}" y="${rootY-4}" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold">Start</text>
+    <text x="${rootX}" y="${rootY+9}" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">here</text>
+  </g>`;
+  // Stage 1 label
+  svg+=`<text x="${s1X}" y="15" text-anchor="middle" fill="#8888aa" font-size="12" font-family="sans-serif" font-weight="600">${s.s1l}</text>`;
+  // Stage 2 label
+  svg+=`<text x="${s2X}" y="15" text-anchor="middle" fill="#8888aa" font-size="12" font-family="sans-serif" font-weight="600">${s.s2l}</text>`;
+  // S1 nodes — bigger
+  for(let i=0;i<s1.length;i++){
+    const c=colors[i%colors.length];
+    const label=`${s1[i]}${s.s1u}`;
+    svg+=`<g class="tree-node" onclick="highlightBranch(${i},-1)" id="s1n-${i}">
+      <circle cx="${s1X}" cy="${s1Y[i]}" r="36" fill="transparent"/>
+      <circle cx="${s1X}" cy="${s1Y[i]}" r="26" fill="#13132b" stroke="${c}" stroke-width="3" class="vis-circle"/>
+      <text x="${s1X}" y="${s1Y[i]+5}" text-anchor="middle" fill="${c}" font-size="15" font-family="sans-serif" font-weight="bold" pointer-events="none">${label}</text>
+    </g>`;
+  }
+  // S2 leaf nodes — bigger
+  for(let i=0;i<s1.length;i++){
+    const c=colors[i%colors.length];
+    for(let j=0;j<s2.length;j++){
+      const leafIdx=i*s2.length+j;
+      const key=`${s1[i]},${s2[j]}`;
+      const prob=s.probs[key]||0;
+      const total = (typeof s1[i]==='number' && typeof s2[j]==='number') ? s1[i]+s2[j] : `${s1[i]}+${s2[j]}`;
+      const totalArg = typeof total==='number' ? total : `'${total}'`;
+      const label=`${s2[j]}${s.s2u}`;
+      svg+=`<g class="tree-node" onclick="clickLeaf('${key}',${totalArg},${prob},${i})" id="s2n-${leafIdx}">
+        <circle cx="${s2X}" cy="${leafYs[leafIdx]}" r="36" fill="transparent"/>
+        <circle cx="${s2X}" cy="${leafYs[leafIdx]}" r="26" fill="#13132b" stroke="${c}" stroke-width="3" class="vis-circle"/>
+        <text x="${s2X}" y="${leafYs[leafIdx]+5}" text-anchor="middle" fill="${c}" font-size="15" font-family="sans-serif" font-weight="bold" pointer-events="none">${label}</text>
+      </g>`;
+      // outcome label + probability
+      svg+=`<text x="${lblX}" y="${leafYs[leafIdx]-4}" fill="#aaaacc" font-size="12" font-family="sans-serif" id="lbl-${leafIdx}">(${s1[i]},${s2[j]}) total: ${total}${s.s1u}</text>`;
+      svg+=`<text x="${probX}" y="${leafYs[leafIdx]+10}" fill="${c}" font-size="13" font-family="monospace" font-weight="600" id="prob-${leafIdx}">P = ${prob.toFixed(2)}</text>`;
+    }
+  }
+  svg+='</svg>';
+  document.getElementById('s0-svg-wrap').innerHTML=svg;
+  document.getElementById('s0-node-result').style.display='none';
+  // Render frequency table above tree
+  renderFreqTable();
+}
+
+function clickLeaf(key, total, prob, s1idx){
+  const s = stories[0][storyIdx[0]];
+  // Highlight path
+  resetTreeOpacity();
+  // Dim all
+  document.querySelectorAll('.path-line').forEach(l=>l.setAttribute('stroke','#2a2a50'));
+  // Find indices
+  const parts = key.split(',');
+  const i = s.s1o.indexOf(isNaN(parts[0])?parts[0]:Number(parts[0]));
+  const n2 = s.s2o.length;
+  const j = s.s2o.indexOf(isNaN(parts[1])?parts[1]:Number(parts[1]));
+  if(i>=0&&j>=0){
+    const lineR = document.getElementById(`line-r-${i}`);
+    const lineIJ = document.getElementById(`line-${i}-${j}`);
+    if(lineR) lineR.setAttribute('stroke','#f7c948');
+    if(lineR) lineR.setAttribute('stroke-width','3');
+    if(lineIJ) lineIJ.setAttribute('stroke','#f7c948');
+    if(lineIJ) lineIJ.setAttribute('stroke-width','3');
+  }
+  document.getElementById('s0-node-result').style.display='block';
+  document.getElementById('s0-nr-out').textContent=`(${key})`;
+  document.getElementById('s0-nr-tot').textContent=total;
+  document.getElementById('s0-nr-prob').textContent=prob.toFixed(2);
+  const interp = s.interp ? s.interp(...key.split(',').map(v=>isNaN(v)?v:Number(v))) : '';
+  document.getElementById('s0-nr-interp').textContent=interp;
+}
+
+function highlightEvent(evIdx){
+  // kept for compatibility — event buttons removed from UI
+}
+
+function resetTreeOpacity(){
+  document.querySelectorAll('[id^="lbl-"],[id^="prob-"]').forEach(el=>el.setAttribute('opacity','1'));
+}
+
+function highlightBranch(s1i, s2j){
+  // stub — clicking s1 node highlights its sub-tree
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 2 — FREQUENCY CHART
+// ═══════════════════════════════════════════════════
+let freqData=[2,5,6,4,3]; // will be overwritten on init from story data
+function renderFreq(){
+  const s=stories[1][storyIdx[1]];
+  const labels=s?s.labels:['0','1','2','3','4'];
+  const storyTotal=s?s.total:20;
+  const unit=s?s.unit:'observations';
+  // ensure freqData matches story on story change
+  if(s && freqData.length!==s.data.length){freqData=[...s.data];}
+  const total=freqData.reduce((a,b)=>a+b,0)||1;
+  const maxV=Math.max(...freqData,1);
+  const colors=['#58a6ff','#5ced8a','#f7c948','#b983ff','#ff6b6b'];
+  const bw=48, sx=55, base=185, scale=155/maxV;
+  let bars='';
+  freqData.forEach((v,i)=>{
+    const x=sx+i*(bw+10); const h=v*scale; const y=base-h;
+    bars+=`<rect x="${x}" y="${y}" width="${bw}" height="${Math.max(h,1)}" fill="${colors[i]}" rx="4" opacity=".85"/>`;
+    bars+=`<text x="${x+bw/2}" y="${y-5}" text-anchor="middle" fill="${colors[i]}" font-size="12" font-weight="bold" font-family="sans-serif">${v}</text>`;
+    bars+=`<text x="${x+bw/2}" y="200" text-anchor="middle" fill="#8888aa" font-size="8" font-family="sans-serif">${(labels[i]||i).replace(' ','&#xa;')}</text>`;
+  });
+  document.getElementById('freq-bars').innerHTML=bars;
+  let tbody='';
+  freqData.forEach((v,i)=>{
+    const relFreq=(v/total).toFixed(3);
+    tbody+=`<tr>
+      <td style="text-align:left;color:var(--txt)">${labels[i]||i}</td>
+      <td style="color:var(--yellow);font-weight:600">${v}</td>
+      <td style="color:var(--blue)">${(v/total*100).toFixed(1)}%</td>
+      <td class="joint">${relFreq}</td>
+    </tr>`;
+  });
+  document.getElementById('freq-tbody').innerHTML=tbody;
+  document.getElementById('freq-sum').textContent=(freqData.reduce((a,b)=>a+b,0)/total).toFixed(3);
+  // Update table header to reflect units
+  const thead=document.querySelector('#freq-tbl thead tr');
+  if(thead) thead.innerHTML=`<th style="text-align:left">Outcome</th><th>Freq (${unit})</th><th>% of total</th><th>P(x) = f/n</th>`;
+  // Update chart axis label
+  const axisLbl=document.getElementById('freq-axis-lbl');
+  if(axisLbl) axisLbl.textContent=s?s.xlabel:'Outcome';
+  // Summary insight
+  const modeIdx=freqData.indexOf(Math.max(...freqData));
+  const modeLabel=labels[modeIdx]||modeIdx;
+  const modeP=(Math.max(...freqData)/total).toFixed(3);
+  const insightEl=document.getElementById('freq-insight');
+  if(insightEl) insightEl.innerHTML=`<span class="ic">📊</span><p>Based on ${total} ${unit}, the most likely outcome is <em>${modeLabel}</em> with P = ${modeP} (${(modeP*100).toFixed(1)}%). All probabilities sum to exactly 1.000 ✓</p>`;
+  renderCumulativeQs(freqData, labels, unit, s?s.xlabel:'Outcome');
+}
+
+function renderCumulativeQs(data, labels, unit, xlabel){
+  const n=data.length;
+  const tot=data.reduce((a,b)=>a+b,0)||1;
+  const probs=data.map(v=>v/tot);
+  const el=document.getElementById('cumul-qs');
+  if(!el)return;
+  const cumBelow=(k)=>probs.slice(0,k+1).reduce((a,b)=>a+b,0);
+  const cumAbove=(k)=>probs.slice(k).reduce((a,b)=>a+b,0);
+  const qs=[];
+  // Q1: P(X ≤ k) where k is around the median
+  const k1=Math.min(Math.floor(n/2),n-2);
+  const p1=cumBelow(k1);
+  const cells1=labels.slice(0,k1+1).map((l,i)=>`P(${l}) = ${probs[i].toFixed(3)}`).join(' + ');
+  qs.push({q:`What is the probability of <strong>${labels[k1]}</strong> or fewer? &nbsp;<em>P(X ≤ ${labels[k1]})</em>`,
+    work:`${cells1} = <strong>${p1.toFixed(3)}</strong>`,
+    interp:`There is a <strong>${(p1*100).toFixed(1)}%</strong> chance the observed ${xlabel.toLowerCase()} is at most "${labels[k1]}". For operations planning, this is the likelihood the situation remains at or below this level.`});
+  // Q2: P(X ≥ k) where k is around the upper half
+  const k2=Math.max(Math.ceil(n/2),1);
+  const p2=cumAbove(k2);
+  const cells2=labels.slice(k2).map((l,i)=>`P(${l}) = ${probs[k2+i].toFixed(3)}`).join(' + ');
+  qs.push({q:`What is the probability of <strong>${labels[k2]}</strong> or more? &nbsp;<em>P(X ≥ ${labels[k2]})</em>`,
+    work:`${cells2} = <strong>${p2.toFixed(3)}</strong>`,
+    interp:`There is a <strong>${(p2*100).toFixed(1)}%</strong> chance the ${xlabel.toLowerCase()} is "${labels[k2]}" or above. This is your probability of encountering a high-demand or high-severity scenario.`});
+  // Q3: P(a ≤ X ≤ b) middle range
+  const a3=Math.max(0,k1-1), b3=Math.min(n-1,k2);
+  const p3=probs.slice(a3,b3+1).reduce((s,v)=>s+v,0);
+  const cells3=labels.slice(a3,b3+1).map((l,i)=>`P(${l}) = ${probs[a3+i].toFixed(3)}`).join(' + ');
+  qs.push({q:`What is the probability the ${xlabel.toLowerCase()} falls between <strong>${labels[a3]}</strong> and <strong>${labels[b3]}</strong>? &nbsp;<em>P(${labels[a3]} ≤ X ≤ ${labels[b3]})</em>`,
+    work:`${cells3} = <strong>${p3.toFixed(3)}</strong>`,
+    interp:`<strong>${(p3*100).toFixed(1)}%</strong> of observations fall in the central range from "${labels[a3]}" to "${labels[b3]}". This "typical zone" is useful for setting capacity or SLA targets that cover the majority of real-world cases.`});
+  el.innerHTML=qs.map((q,i)=>`
+    <div class="panel" style="border-color:rgba(72,219,251,.2)">
+      <div class="panel-title" style="color:var(--teal)">Question ${i+1}</div>
+      <p style="margin-bottom:10px;">${q.q}</p>
+      <div class="formula"><span class="fl">Working</span><div class="eq">${q.work}</div></div>
+      <div class="insight"><span class="ic">💡</span><p>${q.interp}</p></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 4 — ADDITION LAW
+// ═══════════════════════════════════════════════════
+function updateVenn(){
+  const pA=parseInt(document.getElementById('vpa').value)/100;
+  const pB=parseInt(document.getElementById('vpb').value)/100;
+  // Clamp pAB
+  const minAB=Math.max(0,pA+pB-1);
+  const maxAB=Math.min(pA,pB);
+  const slider=document.getElementById('vpab');
+  slider.min=Math.round(minAB*100);
+  slider.max=Math.round(maxAB*100);
+  let pAB=parseInt(slider.value)/100;
+  pAB=Math.max(minAB,Math.min(maxAB,pAB));
+  slider.value=Math.round(pAB*100);
+  document.getElementById('vpa-v').textContent=pA.toFixed(2);
+  document.getElementById('vpb-v').textContent=pB.toFixed(2);
+  document.getElementById('vpab-v').textContent=pAB.toFixed(2);
+  document.getElementById('vpab-range').textContent=`[${minAB.toFixed(2)}–${maxAB.toFixed(2)}]`;
+  const union=Math.min(pA+pB-pAB,1);
+  document.getElementById('venn-union').textContent=union.toFixed(4);
+  document.getElementById('venn-me').textContent=pAB<.001?'✓ Mutually exclusive — no overlap':'';
+  // Derived values
+  const aOnly=(pA-pAB), bOnly=(pB-pAB);
+  // Build dynamic SVG so circle sizes and positions reflect actual probabilities
+  const W=420, H=200, cx=210, cy=100;
+  // Radii proportional to probability (area ∝ probability)
+  const minR=32, maxR=90;
+  const rA=Math.round(minR+Math.sqrt(pA)*(maxR-minR));
+  const rB=Math.round(minR+Math.sqrt(pB)*(maxR-minR));
+  const ryA=Math.round(rA*0.78), ryB=Math.round(rB*0.78);
+  // Overlap ratio: how much of smaller circle is covered
+  const overlapRatio=maxAB>0?pAB/maxAB:0;
+  // Distance between centres: from fully separated (d=rA+rB+8) to fully inside (d=|rA-rB|)
+  const dMax=rA+rB+8, dMin=Math.abs(rA-rB);
+  const d=Math.round(dMax-(dMax-dMin)*overlapRatio);
+  const cxA=Math.round(cx-d/2), cxB=Math.round(cx+d/2);
+  // Fixed label positions: A-only always at 25%, intersection at 50%, B-only at 75% of width
+  const H2=200;
+  const pNone=Math.max(0,1-pA-pB+pAB);
+  let svg=`<svg viewBox="0 0 ${W} ${H2}" width="100%" height="${H2}">
+    <rect x="6" y="6" width="${W-12}" height="${H2-12}" rx="6" fill="none" stroke="#2a2a50" stroke-width="1"/>
+    <text x="20" y="22" fill="#3a3a60" font-size="11" font-family="sans-serif">S</text>
+    <ellipse cx="${cxA}" cy="${cy}" rx="${rA}" ry="${ryA}" fill="rgba(88,166,255,.18)" stroke="#58a6ff" stroke-width="2"/>
+    <ellipse cx="${cxB}" cy="${cy}" rx="${rB}" ry="${ryB}" fill="rgba(255,107,107,.18)" stroke="#ff6b6b" stroke-width="2"/>
+    <text x="${Math.max(16,cxA-rA+10)}" y="${cy-ryA+16}" fill="#58a6ff" font-size="12" font-family="sans-serif" font-weight="600">A</text>
+    <text x="${Math.min(W-16,cxB+rB-14)}" y="${cy-ryB+16}" fill="#ff6b6b" font-size="12" font-family="sans-serif" font-weight="600">B</text>
+    <!-- Probability labels: show slider values P(A), P(A∩B), P(B) so they match controls -->
+    <text x="${cxA}" y="${cy}" text-anchor="middle" fill="#58a6ff" font-size="13" font-weight="bold" font-family="sans-serif">${pA.toFixed(2)}</text>
+    <text x="${cxA}" y="${cy+15}" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">P(A)</text>
+    <text x="${Math.round((cxA+cxB)/2)}" y="${cy}" text-anchor="middle" fill="#f7c948" font-size="13" font-weight="bold" font-family="sans-serif">${pAB.toFixed(2)}</text>
+    <text x="${Math.round((cxA+cxB)/2)}" y="${cy+15}" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">P(A∩B)</text>
+    <text x="${cxB}" y="${cy}" text-anchor="middle" fill="#ff6b6b" font-size="13" font-weight="bold" font-family="sans-serif">${pB.toFixed(2)}</text>
+    <text x="${cxB}" y="${cy+15}" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">P(B)</text>
+  </svg>`;
+  document.getElementById('venn-svg-wrap').innerHTML=svg;
+}
+
+function renderAddEx(){
+  const s=stories[2][storyIdx[2]];
+  if(!s)return;
+  document.getElementById('s2-example').innerHTML=`<p class="muted">${s.text||''}</p>`;
+  updateAddEx();
+}
+
+function updateAddEx(){
+  const s=stories[2][storyIdx[2]];
+  const tot=s?s.total:50;
+  const a=parseInt(document.getElementById('ex-a').value);
+  const b=parseInt(document.getElementById('ex-b').value);
+  let ab=parseInt(document.getElementById('ex-ab').value);
+  ab=Math.min(ab,a,b);
+  document.getElementById('ex-a-v').textContent=a;
+  document.getElementById('ex-b-v').textContent=b;
+  document.getElementById('ex-ab-v').textContent=ab;
+  const pA=a/tot, pB=b/tot, pAB=ab/tot;
+  const union=Math.min(pA+pB-pAB,1);
+  document.getElementById('add-pa').textContent=pA.toFixed(4);
+  document.getElementById('add-pb').textContent=pB.toFixed(4);
+  document.getElementById('add-pab').textContent=pAB.toFixed(4);
+  document.getElementById('add-union').textContent=union.toFixed(4);
+  // interp receives union (probability 0-1) and tot
+  const interp=s&&s.interp?s.interp(union,tot):`${(union*100).toFixed(1)}% experienced at least one of the two events.`;
+  document.getElementById('add-interp').textContent=interp;
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 5 — CONDITIONAL PROBABILITY
+// ═══════════════════════════════════════════════════
+function showCond(el, joint, colMarg, total, lbl1, lbl2){
+  document.querySelectorAll('#police-tbl td').forEach(td=>td.classList.remove('hi'));
+  el.classList.add('hi');
+  const j=joint/total;
+  const cm=colMarg/total;
+  // row marginal: joint/colMarg gives P(A|col), but we need row marginal
+  // Actually the row marginal is sum of row. We need to pass it differently.
+  // For police table: promoted row total = 324/1200=0.27, not-promoted=876/1200=0.73
+  // col marginals: men=960/1200=0.80, women=240/1200=0.20
+  // We passed colMarg = the denominator for the COLUMN marginal
+  const cond1 = j/cm; // P(row event | col event) — e.g. P(A|M)
+  document.getElementById('cr-desc').textContent=`Joint cell: ${joint}/${total} = ${j.toFixed(4)}`;
+  document.getElementById('cr-joint').textContent=j.toFixed(4);
+  document.getElementById('cr-rm').textContent=(joint===288||joint===36?'0.27':(joint===672||joint===204?'0.73':'—'));
+  document.getElementById('cr-cm').textContent=cm.toFixed(4);
+  document.getElementById('cr-calc').textContent=`${lbl1} = ${j.toFixed(4)} / ${cm.toFixed(4)} = ${cond1.toFixed(4)}`;
+  document.getElementById('cond-result').style.display='block';
+}
+
+function showGMAT(el, count, rowTotal, colTotal, rowLabel, colLabel){
+  document.querySelectorAll('#gmat-tbl td').forEach(td=>td.classList.remove('hi'));
+  el.classList.add('hi');
+  const c1=count/rowTotal, c2=count/colTotal;
+  document.getElementById('gr1').textContent=
+    `P(${colLabel} | ${rowLabel}) = ${count} / ${rowTotal} = ${c1.toFixed(4)}  →  ${(c1*100).toFixed(1)}% of ${rowLabel} students majored in ${colLabel}`;
+  document.getElementById('gr2').textContent=
+    `P(${rowLabel} | ${colLabel}) = ${count} / ${colTotal} = ${c2.toFixed(4)}  →  ${(c2*100).toFixed(1)}% of ${colLabel} majors chose ${rowLabel}`;
+  document.getElementById('gmat-result').style.display='block';
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 6 — INDEPENDENCE & MULTIPLICATION
+// ═══════════════════════════════════════════════════
+function updateNews(){
+  const pD=parseInt(document.getElementById('nd').value)/100;
+  const pSD=parseInt(document.getElementById('nsd').value)/100;
+  document.getElementById('nd-v').textContent=pD.toFixed(2);
+  document.getElementById('nsd-v').textContent=pSD.toFixed(2);
+  const both=pD*pSD;
+  document.getElementById('nD').textContent=pD.toFixed(2);
+  document.getElementById('nSD').textContent=pSD.toFixed(2);
+  document.getElementById('nBoth').textContent=both.toFixed(4);
+}
+
+function updateCC(){
+  const p=parseInt(document.getElementById('cc-p').value)/100;
+  const x=parseInt(document.getElementById('cc-x').value);
+  document.getElementById('cc-p-v').textContent=p.toFixed(2);
+  document.getElementById('cc-x-v').textContent=x;
+  const ans=Math.pow(p,x);
+  document.getElementById('cc-formula').textContent=`P(${p.toFixed(2)})^${x} = ${ans.toFixed(4)}`;
+  document.getElementById('cc-ans').textContent=ans.toFixed(4);
+  // bar chart for k=0..x
+  let html='<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;margin-top:8px;">';
+  const colors=['#ff6b6b','#f7c948','#58a6ff','#5ced8a','#b983ff','#ff9f43','#48dbfb','#ff6b6b','#f7c948'];
+  for(let k=0;k<=x;k++){
+    const pk=comb(x,k)*Math.pow(p,k)*Math.pow(1-p,x-k);
+    const h=Math.max(Math.round(pk*160),2);
+    html+=`<div style="text-align:center;min-width:44px;">
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:2px;">${k} of ${x}</div>
+      <div style="height:${h}px;background:${colors[k%9]};border-radius:3px 3px 0 0;opacity:.85;"></div>
+      <div style="font-size:.72rem;color:${colors[k%9]};margin-top:2px;">${(pk*100).toFixed(1)}%</div>
+    </div>`;
+  }
+  html+='</div><p class="muted" style="font-size:.78rem;margin-top:6px;">Binomial distribution: P(exactly k of '+ x +' customers use card)</p>';
+  document.getElementById('cc-chart').innerHTML=html;
+}
+
+function testIndep(){
+  const pA=parseInt(document.getElementById('it-a').value)/100;
+  const pB=parseInt(document.getElementById('it-b').value)/100;
+  const pAB=parseInt(document.getElementById('it-ab').value)/100;
+  document.getElementById('it-a-v').textContent=pA.toFixed(2);
+  document.getElementById('it-b-v').textContent=pB.toFixed(2);
+  document.getElementById('it-ab-v').textContent=pAB.toFixed(2);
+  const product=pA*pB;
+  const indep=Math.abs(pAB-product)<0.001;
+  const el=document.getElementById('it-result');
+  el.innerHTML=`<div class="rl">P(A) × P(B) = ${pA.toFixed(2)} × ${pB.toFixed(2)} = <span>${product.toFixed(4)}</span></div>
+    <div class="rl">P(A∩B) provided = <span>${pAB.toFixed(4)}</span></div>
+    <div class="rh" style="color:${indep?'var(--green)':'var(--coral)'}">${indep?'✓ INDEPENDENT — P(A∩B) = P(A)×P(B)':'✗ DEPENDENT — P(A∩B) ≠ P(A)×P(B)'}</div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 7 — BAYES
+// ═══════════════════════════════════════════════════
+function updateBayes(){
+  const ps1=parseInt(document.getElementById('bs1').value)/100;
+  const ps2=1-ps1;
+  const pd1=parseInt(document.getElementById('bd1').value)/100;
+  const pd2=parseInt(document.getElementById('bd2').value)/100;
+  document.getElementById('bs1-v').textContent=ps1.toFixed(2);
+  document.getElementById('bs2-v').textContent=ps2.toFixed(2);
+  document.getElementById('bd1-v').textContent=pd1.toFixed(2);
+  document.getElementById('bd2-v').textContent=pd2.toFixed(2);
+  const j1=ps1*pd1, j2=ps2*pd2, pb=j1+j2;
+  const post1=j1/pb, post2=j2/pb;
+  document.getElementById('bp1').textContent=(post1*100).toFixed(1)+'%';
+  document.getElementById('bp2').textContent=(post2*100).toFixed(1)+'%';
+  document.getElementById('bb1').style.width=(post1*100).toFixed(1)+'%';
+  document.getElementById('bb2').style.width=(post2*100).toFixed(1)+'%';
+  document.getElementById('bpd').textContent=pb.toFixed(4);
+  document.getElementById('bconc').textContent=`Most likely source: Supplier ${post1>post2?'1':'2'} (${(Math.max(post1,post2)*100).toFixed(1)}% probability)`;
+  // table
+  document.getElementById('bt-p1').textContent=ps1.toFixed(2);
+  document.getElementById('bt-p2').textContent=ps2.toFixed(2);
+  document.getElementById('bt-l1').textContent=pd1.toFixed(2);
+  document.getElementById('bt-l2').textContent=pd2.toFixed(2);
+  document.getElementById('bt-j1').textContent=j1.toFixed(4);
+  document.getElementById('bt-j2').textContent=j2.toFixed(4);
+  document.getElementById('bt-pb').textContent=pb.toFixed(4);
+  document.getElementById('bt-post1').textContent=post1.toFixed(4);
+  document.getElementById('bt-post2').textContent=post2.toFixed(4);
+}
+
+function updateBank(){
+  const pd=parseInt(document.getElementById('bk-pd').value)/100;
+  const pmGnd=parseInt(document.getElementById('bk-pm').value)/100;
+  document.getElementById('bk-pd-v').textContent=pd.toFixed(2);
+  document.getElementById('bk-pm-v').textContent=pmGnd.toFixed(2);
+  const j1=pd*1.0, j2=(1-pd)*pmGnd, pb=j1+j2;
+  const post1=j1/pb, post2=j2/pb;
+  document.getElementById('bk-post1').textContent=(post1*100).toFixed(1)+'%';
+  document.getElementById('bk-post2').textContent=(post2*100).toFixed(1)+'%';
+  document.getElementById('bk-bar1').style.width=(post1*100).toFixed(1)+'%';
+  document.getElementById('bk-bar2').style.width=(post2*100).toFixed(1)+'%';
+  document.getElementById('bk-rp').textContent=pd.toFixed(2);
+  document.getElementById('bk-rpost').textContent=(post1*100).toFixed(1)+'%';
+  document.getElementById('bk-dec').textContent=post1>0.20
+    ?`⚠ Updated P(Default)=${(post1*100).toFixed(1)}% > 20% threshold → RECALL CARD`
+    :`✓ Updated P(Default)=${(post1*100).toFixed(1)}% ≤ 20% → Keep card active`;
+}
+
+function updateBid(){
+  const pw=parseInt(document.getElementById('cb-pw').value)/100;
+  const pl=1-pw;
+  const piw=parseInt(document.getElementById('cb-iw').value)/100;
+  const pil=parseFloat((1-piw).toFixed(2));
+  document.getElementById('cb-pw-v').textContent=pw.toFixed(2);
+  document.getElementById('cb-iw-v').textContent=piw.toFixed(2);
+  document.getElementById('cb-il-v').textContent=pil.toFixed(2);
+  const pi=pw*piw+pl*pil;
+  const postW=pw*piw/pi, postL=pl*pil/pi;
+  document.getElementById('cb-pi').textContent=pi.toFixed(4);
+  document.getElementById('cb-pw-post').textContent=(postW*100).toFixed(1)+'%';
+  document.getElementById('cb-pl-post').textContent=(postL*100).toFixed(1)+'%';
+  document.getElementById('cb-bar1').style.width=(postW*100).toFixed(1)+'%';
+  document.getElementById('cb-bar2').style.width=(postL*100).toFixed(1)+'%';
+  document.getElementById('cb-calc').textContent=`${pw}×${piw.toFixed(2)} / ${pi.toFixed(4)} = ${postW.toFixed(3)}`;
+  document.getElementById('cb-sum').textContent=`${postW.toFixed(3)} + ${postL.toFixed(3)} = ${(postW+postL).toFixed(3)} ✓`;
+  document.getElementById('cb-update-txt').textContent=(postW*100).toFixed(1)+'%';
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+[0,1,2,3,4].forEach(i=>renderStory(i)); // tab 5 (Bayes) is fully hardcoded
+freqData=[...stories[1][0].data]; // init from first assigning probability story
+renderFreq();
+updateVenn();
+renderAddEx();
+updateAddEx();
+updateNews();
+updateCC();
+testIndep();
+updateBayes();
+updateBank();
+updateBid();
+</script>
+</body>
+</html>
