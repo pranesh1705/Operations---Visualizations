@@ -1,2 +1,2 @@
-# Probability---Visualizations
-This repository contains Visualizations related to Basic Probability for MBA Students
+# Visualizations
+This repository contains Visualizations for MBA Students
