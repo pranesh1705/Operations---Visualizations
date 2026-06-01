@@ -1,2 +1,2 @@
 # Visualizations
-This repository contains Visualizations for MBA Students
+This repository contains visualizations for MBA Students
